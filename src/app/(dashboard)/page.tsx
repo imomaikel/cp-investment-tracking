@@ -1,12 +1,14 @@
 'use server';
-import { getUserInvestments } from '@/actions/investments';
 import DataTables from './_components/DataTables';
+import { db, investments } from '@/schema';
 import { redirect } from 'next/navigation';
 import Footer from './_components/Footer';
 import Navbar from './_components/Navbar';
+import { desc, eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 
 const DashboardPage = async () => {
+	// Get the session
 	const session = await auth();
 	const user = session?.user;
 	if (!user?.id) return redirect('/sign-in');
@@ -16,7 +18,11 @@ const DashboardPage = async () => {
 	const username = email.substring(0, email.indexOf('@'));
 
 	// Get user's investments
-	const userInvestments = await getUserInvestments(user.id);
+	const userInvestments = await db
+		.select()
+		.from(investments)
+		.where(eq(investments.userId, user.id))
+		.orderBy(desc(investments.createdAt));
 
 	return (
 		<div className='min-h-screen flex flex-col'>
@@ -26,9 +32,7 @@ const DashboardPage = async () => {
 
 			<div className='max-w-screen-2xl mx-auto flex flex-1 flex-col w-full'>
 				<section className='flex flex-col flex-1 pt-4 pb-24 sm:pb-16 md:pb-10 lg:pb-8'>
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-						<DataTables investments={userInvestments} />
-					</div>
+					<DataTables investments={userInvestments} />
 				</section>
 
 				<footer className='fixed bottom-0 bg-background max-w-screen-2xl w-full'>

@@ -48,11 +48,22 @@ const DataTables = ({ investments: initialInvestments }: DataTableProps) => {
 	// Initial aggregate
 	useEffect(() => aggregateData(initialInvestments), []);
 
+	// Add a new investment
+	const addNewInvestment = (newInvestment: InvestmentType) => {
+		const updatedInvestments = [newInvestment, ...investments];
+		aggregateData(updatedInvestments);
+		setInvestments(updatedInvestments);
+	};
+
 	return (
-		<>
-			<InvestmentsTable investments={investments} editField={editField} />
+		<div className='grid grid-cols-1 md:grid-cols-2 gap-6 px-2 sm:px-4'>
+			<InvestmentsTable
+				investments={investments}
+				editField={editField}
+				addNewInvestment={addNewInvestment}
+			/>
 			<AggregatedTable data={aggregatedData} />
-		</>
+		</div>
 	);
 };
 

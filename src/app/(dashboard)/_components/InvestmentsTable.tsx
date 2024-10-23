@@ -16,25 +16,31 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { EditFieldFnType, InvestmentType } from '@/lib/types';
+import NewInvestmentDialog from './NewInvestmentDialog';
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { LuArrowUpDown } from 'react-icons/lu';
 import EditableField from './EditableField';
+import { FaPlus } from 'react-icons/fa';
 
 type InvestmentsTableProps = {
 	investments: InvestmentType[];
 	editField: EditFieldFnType;
+	addNewInvestment: (newInvestment: InvestmentType) => void;
 };
 /**
  * Render an editable table the with user's investments
  * @param investments All of the user's investments
  * @param editField The function to edit the selected field
+ * @param addNewInvestment The function to add a new investment
  */
 const InvestmentsTable = ({
 	investments,
 	editField,
+	addNewInvestment,
 }: InvestmentsTableProps) => {
 	const [activeFieldId, setActiveFieldId] = useState<null | string>(null);
+	const [newDataDialogOpen, setNewDataDialogOpen] = useState(false);
 	const [sorting, setSorting] = useState<SortingState>([]);
 
 	// Define the table columns
@@ -208,7 +214,18 @@ const InvestmentsTable = ({
 
 	return (
 		<div className='space-y-2'>
-			<h2 className='text-2xl font-semibold titleBar'>Your Investments</h2>
+			<div className='flex justify-between items-center'>
+				<h2 className='text-xl md:text-2xl font-semibold titleBar'>
+					Your Investments
+				</h2>
+				<Button
+					className='shadow-lg'
+					onClick={() => setNewDataDialogOpen(true)}
+				>
+					<FaPlus />
+					<span>Add New</span>
+				</Button>
+			</div>
 			<div className='rounded-md border h-fit shadow-xl'>
 				<Table>
 					<TableHeader>
@@ -264,6 +281,11 @@ const InvestmentsTable = ({
 					</TableBody>
 				</Table>
 			</div>
+			<NewInvestmentDialog
+				isOpen={newDataDialogOpen}
+				setIsOpen={setNewDataDialogOpen}
+				addNewInvestment={addNewInvestment}
+			/>
 		</div>
 	);
 };

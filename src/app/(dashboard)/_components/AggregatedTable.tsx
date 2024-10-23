@@ -22,7 +22,7 @@ type AggregatedTableProps = {
 const AggregatedTable = ({ data }: AggregatedTableProps) => {
 	return (
 		<div className='space-y-2'>
-			<h2 className='text-2xl font-semibold titleBar'>Statistics</h2>
+			<h2 className='text-xl md:text-2xl font-semibold titleBar'>Statistics</h2>
 			<div className='rounded-md border h-fit shadow-xl'>
 				<Table>
 					<TableHeader>
