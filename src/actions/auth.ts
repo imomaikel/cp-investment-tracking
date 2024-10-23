@@ -1,7 +1,8 @@
 'use server';
 import { DEFAULT_INVESTMENTS } from '@/app/constans/investments';
-import { AuthSchema, AuthSchemaType } from '@/validators/auth';
 import { db, investments, users } from '@/schema';
+import { AuthSchema } from '@/validators/auth';
+import { AuthSchemaType } from '@/lib/types';
 import { eq } from 'drizzle-orm';
 import { signIn } from '@/auth';
 import bcrypt from 'bcryptjs';

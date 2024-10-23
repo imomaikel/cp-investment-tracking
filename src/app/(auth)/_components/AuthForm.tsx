@@ -7,14 +7,15 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import { AuthSchema, AuthSchemaType } from '@/validators/auth';
 import { server_signIn, server_signUp } from '@/actions/auth';
 import { Separator } from '@/components/ui/separator';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
+import { AuthSchema } from '@/validators/auth';
 import { Input } from '@/components/ui/input';
+import { AuthSchemaType } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';

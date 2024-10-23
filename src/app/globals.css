@@ -67,3 +67,7 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+.titleBar {
+	@apply relative pl-3 before:absolute before:bg-primary before:h-full before:w-1 before:rounded before:left-0;
+}

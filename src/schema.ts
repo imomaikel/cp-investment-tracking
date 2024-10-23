@@ -1,9 +1,9 @@
 import {
+	doublePrecision,
+	integer,
 	pgTable,
 	text,
 	timestamp,
-	doublePrecision,
-	integer,
 } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { relations } from 'drizzle-orm';
@@ -38,11 +38,12 @@ export const investments = pgTable('investment', {
 	id: text('id')
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
-	name: text('name'),
-	quantity: integer('quantity'),
-	buyPrice: doublePrecision('buyPrice'),
-	currentPrice: doublePrecision('currentPrice'),
+	name: text('name').notNull(),
+	quantity: integer('quantity').notNull(),
+	buyPrice: doublePrecision('buyPrice').notNull(),
+	currentPrice: doublePrecision('currentPrice').notNull(),
 	userId: text('userId'),
+	createdAt: timestamp('createdAt', { mode: 'date' }).notNull().defaultNow(),
 });
 
 // Investment belongs to a user

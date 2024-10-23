@@ -1,0 +1,1 @@
+ALTER TABLE "investment" ADD COLUMN "createdAt" timestamp DEFAULT now() NOT NULL;
