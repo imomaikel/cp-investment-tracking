@@ -15,7 +15,7 @@ import {
 	DialogTitle,
 } from '@/components/ui/dialog';
 import { InvestmentSchemaType, InvestmentType } from '@/lib/types';
-import { createNewInvestment } from '@/actions/investments';
+import { server_createNewInvestment } from '@/actions/investments';
 import { InvestmentSchema } from '@/validators/investment';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -54,7 +54,7 @@ const NewInvestmentDialog = ({
 	// Handle form submission
 	const onSubmit = (values: InvestmentSchemaType) => {
 		startTransition(() => {
-			createNewInvestment(values)
+			server_createNewInvestment(values)
 				.then(({ newInvestment }) => {
 					if (newInvestment) {
 						toast.success('Investment added!');

@@ -1,9 +1,13 @@
-import { InvestmentSchema } from '@/validators/investment';
+import {
+	InvestmentSchema,
+	InvestmentsValidator,
+} from '@/validators/investment';
 import { InferSelectModel } from 'drizzle-orm';
 import { AuthSchema } from '@/validators/auth';
 import { investments } from '@/schema';
 import { z } from 'zod';
 
+export type InvestmentsValidatorType = z.infer<typeof InvestmentsValidator>;
 export type InvestmentSchemaType = z.infer<typeof InvestmentSchema>;
 export type AuthSchemaType = z.infer<typeof AuthSchema>;
 
@@ -18,3 +22,10 @@ export type EditFieldFnType = <T extends keyof InvestmentEditableFieldType>(
 	field: T,
 	value: InvestmentEditableFieldType[T]
 ) => void;
+
+export type HistoryType = {
+	id: string;
+	field: keyof InvestmentEditableFieldType;
+	valueBefore: InvestmentEditableFieldType[keyof InvestmentEditableFieldType];
+	valueAfter: InvestmentEditableFieldType[keyof InvestmentEditableFieldType];
+};

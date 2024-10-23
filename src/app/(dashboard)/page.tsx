@@ -1,10 +1,9 @@
 'use server';
 import DataTables from './_components/DataTables';
-import { db, investments } from '@/schema';
+import { getUserInvestments } from '@/helpers';
 import { redirect } from 'next/navigation';
 import Footer from './_components/Footer';
 import Navbar from './_components/Navbar';
-import { desc, eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 
 const DashboardPage = async () => {
@@ -18,11 +17,7 @@ const DashboardPage = async () => {
 	const username = email.substring(0, email.indexOf('@'));
 
 	// Get user's investments
-	const userInvestments = await db
-		.select()
-		.from(investments)
-		.where(eq(investments.userId, user.id))
-		.orderBy(desc(investments.createdAt));
+	const userInvestments = await getUserInvestments(user.id);
 
 	return (
 		<div className='min-h-screen flex flex-col'>

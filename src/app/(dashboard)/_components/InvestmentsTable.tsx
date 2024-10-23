@@ -1,5 +1,13 @@
 'use client';
 import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table';
+import {
 	ColumnDef,
 	flexRender,
 	getCoreRowModel,
@@ -8,40 +16,106 @@ import {
 	useReactTable,
 } from '@tanstack/react-table';
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/table';
-import { EditFieldFnType, InvestmentType } from '@/lib/types';
+	EditFieldFnType,
+	HistoryType,
+	InvestmentEditableFieldType,
+	InvestmentType,
+} from '@/lib/types';
+import {
+	Dispatch,
+	SetStateAction,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react';
+import { FaExclamation, FaPlus, FaRedo, FaUndo } from 'react-icons/fa';
 import NewInvestmentDialog from './NewInvestmentDialog';
-import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { LuArrowUpDown } from 'react-icons/lu';
 import EditableField from './EditableField';
-import { FaPlus } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 type InvestmentsTableProps = {
 	investments: InvestmentType[];
-	editField: EditFieldFnType;
+	isSaving: boolean;
+	canUndo: boolean;
+	canRedo: boolean;
+	registerEditHistory: Dispatch<SetStateAction<HistoryType[]>>;
 	addNewInvestment: (newInvestment: InvestmentType) => void;
+	editField: EditFieldFnType;
+	saveChanges: () => void;
+	undo: () => void;
+	redo: () => void;
 };
 /**
  * Render an editable table the with user's investments
  * @param investments All of the user's investments
- * @param editField The function to edit the selected field
+ * @param isSaving Is saving
+ * @param canUndo Can undo
+ * @param canRedo Can redo
+ * @param registerEditHistory The function to register the edit history
  * @param addNewInvestment The function to add a new investment
+ * @param editField The function to edit the selected field
+ * @param saveChanges The function to save the changes
+ * @param undo The undo function
+ * @param redo The redo function
+ *
  */
 const InvestmentsTable = ({
 	investments,
-	editField,
+	isSaving,
+	canUndo,
+	canRedo,
+	editField: originalEditField,
+	registerEditHistory,
 	addNewInvestment,
+	saveChanges,
+	undo,
+	redo,
 }: InvestmentsTableProps) => {
 	const [activeFieldId, setActiveFieldId] = useState<null | string>(null);
 	const [newDataDialogOpen, setNewDataDialogOpen] = useState(false);
 	const [sorting, setSorting] = useState<SortingState>([]);
+
+	// Store changes before the edit
+	const originalCellData = useRef<
+		(InvestmentType & { field: keyof InvestmentEditableFieldType }) | null
+	>(null);
+
+	// Before editing, store the original value
+	const editField: EditFieldFnType = (id, field, value) => {
+		if (!originalCellData.current) {
+			const findInvestment = investments.find((entry) => entry.id === id);
+			if (findInvestment) {
+				originalCellData.current = { ...findInvestment, field };
+			}
+		}
+		originalEditField(id, field, value);
+	};
+
+	// Cancel the edit and add the changes to the history
+	const onCancelEdit = () => {
+		if (originalCellData.current?.field) {
+			const updatedCell = investments.find(
+				(entry) => entry.id === originalCellData.current?.id
+			);
+			if (updatedCell) {
+				const fieldToEdit = originalCellData.current.field;
+				const originalValue = originalCellData.current[fieldToEdit];
+				registerEditHistory((prev) =>
+					prev.concat({
+						field: fieldToEdit,
+						id: updatedCell.id,
+						valueAfter: updatedCell[fieldToEdit],
+						valueBefore: originalValue,
+					})
+				);
+			}
+		}
+		originalCellData.current = null;
+		setActiveFieldId(null);
+	};
 
 	// Define the table columns
 	const tableColumns = useMemo(() => {
@@ -69,9 +143,11 @@ const InvestmentsTable = ({
 
 					return (
 						<EditableField
+							onCancel={onCancelEdit}
 							activeFieldId={activeFieldId}
 							editField={editField}
 							id={id}
+							isSaving={isSaving}
 							setActiveFieldId={setActiveFieldId}
 							value={value}
 							cellId={cellId}
@@ -103,6 +179,7 @@ const InvestmentsTable = ({
 
 					return (
 						<EditableField
+							onCancel={onCancelEdit}
 							activeFieldId={activeFieldId}
 							editField={editField}
 							id={id}
@@ -110,6 +187,7 @@ const InvestmentsTable = ({
 							value={value}
 							cellId={cellId}
 							fieldType='quantity'
+							isSaving={isSaving}
 						/>
 					);
 				},
@@ -137,6 +215,7 @@ const InvestmentsTable = ({
 
 					return (
 						<EditableField
+							onCancel={onCancelEdit}
 							activeFieldId={activeFieldId}
 							editField={editField}
 							id={id}
@@ -144,6 +223,7 @@ const InvestmentsTable = ({
 							value={value}
 							cellId={cellId}
 							fieldType='buyPrice'
+							isSaving={isSaving}
 						/>
 					);
 				},
@@ -171,6 +251,7 @@ const InvestmentsTable = ({
 
 					return (
 						<EditableField
+							onCancel={onCancelEdit}
 							activeFieldId={activeFieldId}
 							editField={editField}
 							id={id}
@@ -178,6 +259,7 @@ const InvestmentsTable = ({
 							value={value}
 							cellId={cellId}
 							fieldType='currentPrice'
+							isSaving={isSaving}
 						/>
 					);
 				},
@@ -221,6 +303,7 @@ const InvestmentsTable = ({
 				<Button
 					className='shadow-lg'
 					onClick={() => setNewDataDialogOpen(true)}
+					disabled={isSaving}
 				>
 					<FaPlus />
 					<span>Add New</span>
@@ -274,13 +357,61 @@ const InvestmentsTable = ({
 									colSpan={tableColumns.length}
 									className='h-24 text-center'
 								>
-									No results.
+									No investments.
 								</TableCell>
 							</TableRow>
 						)}
 					</TableBody>
 				</Table>
 			</div>
+			<div className='flex flex-col gap-4 md:flex-row md:justify-between'>
+				<div className='titleBar'>
+					<span className='font-bold text-lg'>Hint!</span>
+					<p className='text-muted-foreground text-sm'>
+						You can edit the fields by clicking on the table cell.
+					</p>
+				</div>
+				<div className='gap-2 flex items-center mt-auto'>
+					<Button
+						variant='outline'
+						className='shadow-md'
+						disabled={!canUndo || isSaving}
+						onClick={undo}
+					>
+						Undo
+						<FaUndo />
+					</Button>
+					<Button
+						variant='outline'
+						className='shadow-md'
+						disabled={!canRedo || isSaving}
+						onClick={redo}
+					>
+						<FaRedo />
+						Redo
+					</Button>
+				</div>
+			</div>
+			{canUndo && (
+				<motion.div
+					key={`changes-${canUndo}`}
+					transition={{ type: 'spring' }}
+					animate={{ opacity: [0, 1], y: [10, 0] }}
+					className='flex items-center gap-6 !my-6'
+				>
+					<p className='shrink-0 flex gap-2 items-center font-bold text-destructive'>
+						<FaExclamation className='size-8 animate-bounce' />
+						<span>You have unsaved changes.</span>
+					</p>
+					<Button
+						className='w-full shadow-md'
+						onClick={saveChanges}
+						disabled={isSaving}
+					>
+						Save
+					</Button>
+				</motion.div>
+			)}
 			<NewInvestmentDialog
 				isOpen={newDataDialogOpen}
 				setIsOpen={setNewDataDialogOpen}

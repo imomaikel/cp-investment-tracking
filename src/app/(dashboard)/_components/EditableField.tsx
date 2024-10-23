@@ -8,6 +8,8 @@ type EditableFieldType = {
 	value: string | number;
 	cellId: string;
 	fieldType: keyof InvestmentEditableFieldType;
+	onCancel: () => void;
+	isSaving: boolean;
 };
 /**
  * Render the editable form field
@@ -18,6 +20,8 @@ type EditableFieldType = {
  * @param value The value of the field
  * @param cellId The unique id of the cell
  * @param fieldType The type of the field
+ * @param onCancel The function to cancel the edit
+ * @param isSaving Is saving
  */
 const EditableField = ({
 	setActiveFieldId,
@@ -27,15 +31,23 @@ const EditableField = ({
 	value,
 	cellId,
 	fieldType,
+	onCancel,
+	isSaving,
 }: EditableFieldType) => {
 	return (
-		<div onClick={() => setActiveFieldId(cellId)}>
+		<div
+			onClick={() => {
+				if (isSaving) return;
+				setActiveFieldId(cellId);
+			}}
+		>
 			{activeFieldId === cellId ? (
 				<input
+					disabled={isSaving}
 					className='w-full ring-1 ring-border rounded-md px-2 outline-none focus:ring-primary transition-colors'
 					autoFocus
 					defaultValue={value}
-					onBlur={() => setActiveFieldId(null)}
+					onBlur={onCancel}
 					type={typeof value === 'number' ? 'number' : 'text'}
 					onChange={(event) => {
 						const newValue =
