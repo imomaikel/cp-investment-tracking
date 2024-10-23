@@ -55,7 +55,13 @@ const EditableField = ({
 								? event.target.valueAsNumber
 								: event.target.value;
 						if (typeof value === 'number') {
-							if (typeof newValue === 'number' && isNaN(newValue)) return;
+							if (typeof newValue === 'number') {
+								if (isNaN(newValue)) return;
+								if (newValue <= 0) {
+									console.log(newValue);
+									return editField(id, fieldType, 1);
+								}
+							}
 						}
 						editField(id, fieldType, newValue);
 					}}
