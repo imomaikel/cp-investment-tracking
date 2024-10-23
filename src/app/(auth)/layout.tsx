@@ -1,5 +1,11 @@
 import { Separator } from '@/components/ui/separator';
 import Logo from '@/components/Logo';
+import { startCase } from 'lodash';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: startCase('Authorization'),
+};
 
 // Layout of the Sign in and Sign up pages
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
