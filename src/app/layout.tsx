@@ -22,7 +22,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
 		<html lang='en' className={poppins.className}>
 			<body>
 				{children}
-				<Toaster position='top-left' />
+				<Toaster position='top-center' />
 			</body>
 		</html>
 	);

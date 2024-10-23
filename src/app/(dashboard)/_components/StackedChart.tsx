@@ -68,23 +68,23 @@ const StackedChart = ({ data }: AggregatedTableProps) => {
 	}, [totalCurrentValue, totalInvestment, totalProfit]);
 
 	return (
-		<div className='rounded-md border h-fit shadow-xl bg-background flex justify-between items-center'>
+		<div className='rounded-md border h-fit shadow-xl bg-background flex flex-col md:flex-row justify-between items-center'>
 			<div className='px-4 text-center'>
 				<h3 className='font-semibold text-xl'>Statistics Chart</h3>
 				<p className='text-sm text-muted-foreground'>
 					Compare your total investment, current value, and profit
 				</p>
-				<p className='mt-12 flex justify-center gap-2 items-center w-full'>
+				<p className='mt-4 md:mt-12 flex justify-center gap-2 items-center w-full'>
 					<FaHeartPulse className='size-6 text-red-600 animate-pulse' />
 					<span className='text-sm text-muted-foreground'>
 						Real-time updates
 					</span>
 				</p>
 			</div>
-			<div className='flex-1 pb-0'>
+			<div className='h-[300px]'>
 				<ChartContainer
 					config={chartConfig}
-					className='mx-auto aspect-square max-h-[300px]'
+					className='mx-auto aspect-square h-full'
 				>
 					<PieChart>
 						<Pie data={chartData} dataKey='total' />

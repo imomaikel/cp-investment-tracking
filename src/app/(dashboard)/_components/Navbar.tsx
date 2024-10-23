@@ -20,7 +20,7 @@ const Navbar = ({ username }: NavbarProps) => {
 						Investment Tracker
 					</h1>
 				</div>
-				<Button asChild variant='outline' className='hidden md:flex'>
+				<Button asChild variant='outline' className='hidden md:flex gap-0'>
 					<Link
 						href='/api/auth/logout'
 						className='flex flex-col gap-0'
