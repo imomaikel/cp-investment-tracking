@@ -1,4 +1,5 @@
 import { Poppins } from 'next/font/google';
+import { Toaster } from 'react-hot-toast';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -15,7 +16,10 @@ const poppins = Poppins({
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<html lang='en' className={poppins.className}>
-			<body>{children}</body>
+			<body>
+				{children}
+				<Toaster position='top-left' />
+			</body>
 		</html>
 	);
 };
