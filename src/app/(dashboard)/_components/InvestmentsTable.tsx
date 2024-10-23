@@ -35,6 +35,7 @@ import { Button } from '@/components/ui/button';
 import { LuArrowUpDown } from 'react-icons/lu';
 import EditableField from './EditableField';
 import { motion } from 'framer-motion';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
 
 type InvestmentsTableProps = {
 	investments: InvestmentType[];
@@ -280,6 +281,24 @@ const InvestmentsTable = ({
 		},
 	});
 
+	// Generate and download data as CSV
+	const generateAndDownloadCSV = () => {
+		const csvConfig = mkConfig({
+			fieldSeparator: ',',
+			filename: 'investments',
+			decimalSeparator: '.',
+			useKeysAsHeaders: true,
+		});
+		const rowData = table.getRowModel().rows.map((row) => ({
+			name: row.original.name,
+			quantity: row.original.quantity,
+			buyPrice: row.original.buyPrice,
+			currentPrice: row.original.currentPrice,
+		}));
+		const csv = generateCsv(csvConfig)(rowData);
+		download(csvConfig)(csv);
+	};
+
 	// Close the active field when the user presses the escape key
 	useEffect(() => {
 		const onKeyPress = (event: KeyboardEvent) => {
@@ -364,31 +383,41 @@ const InvestmentsTable = ({
 					</TableBody>
 				</Table>
 			</div>
-			<div className='flex flex-col gap-4 md:flex-row md:justify-between'>
-				<div className='titleBar'>
+			<div className='flex flex-col gap-4 md:flex-row md:justify-between !my-4 px-0.5'>
+				<div className='titleBar h-fit'>
 					<span className='font-bold text-lg'>Hint!</span>
 					<p className='text-muted-foreground text-sm'>
 						You can edit the fields by clicking on the table cell.
 					</p>
 				</div>
-				<div className='gap-2 flex items-center mt-auto'>
+				<div className='flex flex-col gap-2'>
+					<div className='gap-2 flex items-center mt-auto'>
+						<Button
+							variant='outline'
+							className='shadow-md'
+							disabled={!canUndo || isSaving}
+							onClick={undo}
+						>
+							Undo
+							<FaUndo />
+						</Button>
+						<Button
+							variant='outline'
+							className='shadow-md'
+							disabled={!canRedo || isSaving}
+							onClick={redo}
+						>
+							<FaRedo />
+							Redo
+						</Button>
+					</div>
 					<Button
+						size='sm'
 						variant='outline'
 						className='shadow-md'
-						disabled={!canUndo || isSaving}
-						onClick={undo}
+						onClick={generateAndDownloadCSV}
 					>
-						Undo
-						<FaUndo />
-					</Button>
-					<Button
-						variant='outline'
-						className='shadow-md'
-						disabled={!canRedo || isSaving}
-						onClick={redo}
-					>
-						<FaRedo />
-						Redo
+						Export and Download
 					</Button>
 				</div>
 			</div>

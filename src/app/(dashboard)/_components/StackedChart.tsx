@@ -81,7 +81,7 @@ const StackedChart = ({ data }: AggregatedTableProps) => {
 					</span>
 				</p>
 			</div>
-			<div className='h-[300px]'>
+			<div className='h-[335px]'>
 				<ChartContainer
 					config={chartConfig}
 					className='mx-auto aspect-square h-full'
