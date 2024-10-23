@@ -1,6 +1,7 @@
 'use server';
+import { DEFAULT_INVESTMENTS } from '@/app/constans/investments';
 import { AuthSchema, AuthSchemaType } from '@/validators/auth';
-import { db, users } from '@/schema';
+import { db, investments, users } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { signIn } from '@/auth';
 import bcrypt from 'bcryptjs';
@@ -26,12 +27,29 @@ export const server_signUp = async (data: AuthSchemaType) => {
 	// Hash password
 	const hashedPassword = await bcrypt.hash(password, 12);
 
-	// Create a new user
+	// Create a new user and put the default investments
 	if (!user) {
-		await db.insert(users).values({
-			email,
-			password: hashedPassword,
-			name: email.substring(0, email.indexOf('@')),
+		await db.transaction(async (tx) => {
+			const newUser = await tx
+				.insert(users)
+				.values({
+					email,
+					password: hashedPassword,
+					name: email.substring(0, email.indexOf('@')),
+				})
+				.returning({
+					userId: users.id,
+				});
+
+			// Create the default investments
+			const newUserDefaultInvestments = DEFAULT_INVESTMENTS.map(
+				(investment) => ({
+					...investment,
+					userId: newUser[0].userId,
+				})
+			);
+
+			await tx.insert(investments).values(newUserDefaultInvestments);
 		});
 	}
 
