@@ -309,7 +309,7 @@ const InvestmentsTable = ({
 					<span>Add New</span>
 				</Button>
 			</div>
-			<div className='rounded-md border h-fit shadow-xl'>
+			<div className='rounded-md border shadow-xl max-h-[275px] overflow-y-auto'>
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (

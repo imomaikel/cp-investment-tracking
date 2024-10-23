@@ -2,8 +2,10 @@
 import { EditFieldFnType, HistoryType, InvestmentType } from '@/lib/types';
 import { server_updateInvestments } from '@/actions/investments';
 import { useEffect, useState, useTransition } from 'react';
+import InvestmentsChart from './InvestmentsChart';
 import InvestmentsTable from './InvestmentsTable';
 import AggregatedTable from './AggregatedTable';
+import StackedChart from './StackedChart';
 import toast from 'react-hot-toast';
 
 type DataTableProps = {
@@ -124,20 +126,28 @@ const DataTables = ({ investments: initialInvestments }: DataTableProps) => {
 	const canRedo = !!redoData.length;
 
 	return (
-		<div className='grid grid-cols-1 md:grid-cols-2 gap-6 px-2 sm:px-4'>
-			<InvestmentsTable
-				investments={investments}
-				editField={editField}
-				addNewInvestment={addNewInvestment}
-				canUndo={canUndo}
-				canRedo={canRedo}
-				redo={redo}
-				undo={undo}
-				registerEditHistory={setUndoData}
-				saveChanges={saveChanges}
-				isSaving={isSaving}
-			/>
-			<AggregatedTable data={aggregatedData} />
+		<div className='flex flex-col gap-6'>
+			<div className='grid grid-cols-1 md:grid-cols-2 gap-6 px-2 sm:px-4'>
+				<InvestmentsTable
+					investments={investments}
+					editField={editField}
+					addNewInvestment={addNewInvestment}
+					canUndo={canUndo}
+					canRedo={canRedo}
+					redo={redo}
+					undo={undo}
+					registerEditHistory={setUndoData}
+					saveChanges={saveChanges}
+					isSaving={isSaving}
+				/>
+				<div className='flex flex-col gap-4'>
+					<AggregatedTable data={aggregatedData} />
+					<StackedChart data={aggregatedData} />
+				</div>
+			</div>
+			<div className='px-2 sm:px-4'>
+				<InvestmentsChart data={investments} />
+			</div>
 		</div>
 	);
 };
