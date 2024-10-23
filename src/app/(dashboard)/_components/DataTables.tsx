@@ -114,6 +114,8 @@ const DataTables = ({ investments: initialInvestments }: DataTableProps) => {
 				.then((isSuccess) => {
 					if (isSuccess) {
 						toast.success('Investments saved!');
+						setUndoData([]);
+						setRedoData([]);
 					} else {
 						toast.error('Something went wrong!');
 					}
