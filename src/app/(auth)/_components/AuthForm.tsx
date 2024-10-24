@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { AuthSchema } from '@/validators/auth';
 import { Input } from '@/components/ui/input';
 import { AuthSchemaType } from '@/lib/types';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -41,7 +40,6 @@ const AuthForm = ({ method }: AuthFormProps) => {
 	const [showPassword, setShowPassword] = useState(false);
 	// Loading state
 	const [pending, startTransition] = useTransition();
-	const router = useRouter();
 
 	// Change password visibility
 	const handleShowPassword = () => setShowPassword(!showPassword);
@@ -51,8 +49,7 @@ const AuthForm = ({ method }: AuthFormProps) => {
 		startTransition(() => {
 			if (method === 'SIGN_IN') {
 				server_signIn(data.email, data.password).then((redirectUrl) => {
-					if (redirectUrl) {
-						router.replace(redirectUrl);
+					if (redirectUrl === undefined) {
 						toast.success('Logged In!');
 					} else {
 						toast.error('Invalid Credentials!', { position: 'top-center' });

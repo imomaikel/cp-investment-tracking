@@ -3,6 +3,8 @@ import { DEFAULT_INVESTMENTS } from '@/app/constans/investments';
 import { db, investments, users } from '@/schema';
 import { AuthSchema } from '@/validators/auth';
 import { AuthSchemaType } from '@/lib/types';
+import { redirect } from 'next/navigation';
+import { AuthError } from 'next-auth';
 import { eq } from 'drizzle-orm';
 import { signIn } from '@/auth';
 import bcrypt from 'bcryptjs';
@@ -84,7 +86,7 @@ export const server_validateCredentials = async (data: unknown) => {
 	if (!user) return null;
 
 	// Check if the password is valid
-	const isPasswordValid = bcrypt.compare(password, user.password || '');
+	const isPasswordValid = await bcrypt.compare(password, user.password || '');
 	if (!isPasswordValid) {
 		return null;
 	}
@@ -103,14 +105,22 @@ export const server_signIn = async (
 	password: string
 ): Promise<string | false> => {
 	try {
-		const redirectUrl = await signIn('credentials', {
+		await signIn('credentials', {
 			email,
 			password,
 			redirect: false,
 		});
 
-		return redirectUrl;
-	} catch {
-		return false;
+		redirect('/');
+	} catch (error) {
+		if (error instanceof AuthError) {
+			switch (error.type) {
+				case 'CredentialsSignin':
+					return false;
+				default:
+					return false;
+			}
+		}
+		throw error;
 	}
 };
