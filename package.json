@@ -7,7 +7,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"prepare": "husky"
+		"prepare": "husky",
+		"cypress": "cypress run"
 	},
 	"dependencies": {
 		"@auth/drizzle-adapter": "^1.7.2",
@@ -49,6 +50,7 @@
 		"@types/node": "^20",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
+		"cypress": "^13.15.0",
 		"drizzle-kit": "^0.26.2",
 		"eslint": "^8",
 		"eslint-config-next": "14.2.15",

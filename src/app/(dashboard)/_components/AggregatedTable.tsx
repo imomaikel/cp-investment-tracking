@@ -34,9 +34,15 @@ const AggregatedTable = ({ data }: AggregatedTableProps) => {
 					</TableHeader>
 					<TableBody>
 						<TableRow>
-							<TableCell>{formatCurrency(data.totalInvestment)}</TableCell>
-							<TableCell>{formatCurrency(data.totalCurrentValue)}</TableCell>
-							<TableCell>{formatCurrency(data.totalProfit)}</TableCell>
+							<TableCell data-testid='result-totalInvestment'>
+								{formatCurrency(data.totalInvestment)}
+							</TableCell>
+							<TableCell data-testid='result-totalCurrentValue'>
+								{formatCurrency(data.totalCurrentValue)}
+							</TableCell>
+							<TableCell data-testid='result-totalProfit'>
+								{formatCurrency(data.totalProfit)}
+							</TableCell>
 						</TableRow>
 					</TableBody>
 				</Table>

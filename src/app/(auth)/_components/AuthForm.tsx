@@ -75,6 +75,7 @@ const AuthForm = ({ method }: AuthFormProps) => {
 							<FormLabel>E-mail</FormLabel>
 							<FormControl>
 								<Input
+									data-testid='email-input'
 									placeholder='john.doe@example.com'
 									{...field}
 									disabled={pending}
@@ -93,6 +94,7 @@ const AuthForm = ({ method }: AuthFormProps) => {
 							<FormControl>
 								<div className='flex relative'>
 									<Input
+										data-testid='password-input'
 										{...field}
 										type={showPassword ? 'text' : 'password'}
 										className='pr-10'
@@ -146,7 +148,12 @@ const AuthForm = ({ method }: AuthFormProps) => {
 					viewport={{ once: false }}
 					className='w-full !mt-6'
 				>
-					<Button type='submit' className='w-full' disabled={pending}>
+					<Button
+						type='submit'
+						className='w-full'
+						disabled={pending}
+						data-testid='submit-auth'
+					>
 						{method === 'SIGN_IN' ? 'Login' : 'Create Account'}
 					</Button>
 				</motion.div>

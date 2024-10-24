@@ -43,6 +43,7 @@ const EditableField = ({
 		>
 			{activeFieldId === cellId ? (
 				<input
+					data-testclass={`field-${fieldType}`}
 					disabled={isSaving}
 					className='w-full ring-1 ring-border rounded-md px-2 outline-none focus:ring-primary transition-colors'
 					autoFocus
@@ -67,7 +68,7 @@ const EditableField = ({
 					}}
 				/>
 			) : (
-				<span>{value}</span>
+				<span data-testclass={`field-${fieldType}`}>{value}</span>
 			)}
 		</div>
 	);
